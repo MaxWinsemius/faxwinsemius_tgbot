@@ -11,11 +11,9 @@ class CTS2000 extends Printer
 {
     static public function printFile($file)
     {
-        Storage::disk('local')->append('max_log.log', 'hello');
+        $path = Storage::disk('local')->path($file);
 
-        $link = Storage::disk('local')->url($file);
-
-        $process = new Process("/usr/bin/cat " . $link . " | /usr/bin/lpr");
+        $process = new Process("/usr/bin/lpr " . $path);
         $process->run();
 
         Storage::disk('local')->delete($file);
