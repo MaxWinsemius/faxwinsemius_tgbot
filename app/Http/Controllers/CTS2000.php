@@ -9,11 +9,15 @@ use Symfony\Component\Process\Process;
 
 class CTS2000 extends Printer
 {
-    static public function printFile($file)
+    static protected $printoptions = "-o cpi=10 -o lpi=8";
+
+    static public function printFile($file, $usePrinterOptions=true)
     {
         $path = Storage::disk('local')->path($file);
 
-        $process = new Process("/usr/bin/lpr " . $path);
+        $opts = $usePrinterOptions ? self::$printoptions : "";
+
+        $process = new Process("/usr/bin/lpr " . $opts . " " . $path);
         $process->run();
 
         Storage::disk('local')->delete($file);
