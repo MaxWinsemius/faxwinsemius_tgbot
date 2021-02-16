@@ -11,9 +11,17 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::middleware(['IpMiddleware'])->group(function() {
+    Route::get('/', function () {
+        return view('welcome');
+    });
+
+    Route::get('/botman/tinker', 'BotManController@tinker');
 });
 
+
+Route::get('/503', function() {
+    return "503 access denied";
+})->name('503');
+
 Route::match(['get', 'post'], '/botman', 'BotManController@handle');
-Route::get('/botman/tinker', 'BotManController@tinker');
