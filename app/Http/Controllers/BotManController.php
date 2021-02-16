@@ -86,7 +86,7 @@ Welcome to the FaxWinsemius bot! Here you will be able to send your best message
         }
 
         //CTS2000::printText($message);
-        $file = "messages/" . hash('sha224', $message) . ".data";
+        $file = "messages/" . hash('sha224', $message . now()) . ".data";
         Storage::disk('local')->put($file, $message);
         CTS2000::printFile($file);
 
