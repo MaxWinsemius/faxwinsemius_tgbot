@@ -20,12 +20,4 @@ class CTS2000 extends Printer
 
         return $process->isSuccessful();
     }
-
-    static public function printText(string $text)
-    {
-        $process = new Process('/usr/bin/echo "' . addslashes($text) . '" | /usr/bin/lpr');
-        $process->run();
-
-        return $process->isSuccessful();
-    }
 }
