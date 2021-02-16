@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 use App\BotUser;
+use App\Conversations\ImagetestConversation;
 use App\Http\Controllers\CTS2000;
 use App\Http\Middleware\ReceivedBotUserAssociator;
 use App\Http\Middleware\SendingMarkdownParser;
@@ -51,6 +52,28 @@ class BotManController extends Controller
 Welcome to the FaxWinsemius bot! Here you will be able to send your best messages to the CT-S2000 Receipt printer! To start off, first request a printing /license. After that you can print any message that does not start with a '/'. Send '/help' if you want help. Have fun!
 ";
         $bot->reply($str);
+    }
+
+    protected function printImages($images)
+    {
+        foreach ($images as $image) {
+            $url = $image->getUrl();
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_NOBODY, true);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HEADER, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+
+            $data = curl_exec($ch);
+            curl_close($ch);
+
+            Log::debug(json_encode($data));
+        }
+    }
+
+    public function doAdmin(BotMan $bot)
+    {
+        $bot->startConversation(new ImagetestConversation());
     }
 
     public function doPrint(BotMan $bot, string $string)
