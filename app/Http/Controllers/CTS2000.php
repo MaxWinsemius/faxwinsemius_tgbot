@@ -15,15 +15,17 @@ class CTS2000 extends Printer
 
         $link = Storage::disk('local')->url($file);
 
-        $process = new Process('cat ' . $link . " | lpr");
+        $process = new Process("/usr/bin/cat " . $link . " | /usr/bin/lpr");
         $process->run();
+
+        Storage::disk('local')->delete($file);
 
         return $process->isSuccessful();
     }
 
     static public function printText(string $text)
     {
-        $process = new Process('echo "' . addslashes($text) . '" | lpr');
+        $process = new Process('/usr/bin/echo "' . addslashes($text) . '" | /usr/bin/lpr');
         $process->run();
 
         return $process->isSuccessful();

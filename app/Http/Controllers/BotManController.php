@@ -6,6 +6,7 @@ use BotMan\BotMan\BotMan;
 use BotMan\Drivers\Telegram\TelegramDriver;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 use App\BotUser;
 use App\Http\Controllers\CTS2000;
@@ -85,7 +86,7 @@ Welcome to the FaxWinsemius bot! Here you will be able to send your best message
         }
 
         //CTS2000::printText($message);
-        $file = hash('sha224', $message) . ".data";
+        $file = "messages/" . hash('sha224', $message) . ".data";
         Storage::disk('local')->put($file, $message);
         CTS2000::printFile($file);
 
