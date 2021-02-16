@@ -31,7 +31,31 @@ class ImagetestConversation extends Conversation
                 $data = curl_exec($ch);
                 curl_close($ch);
 
-                Log::debug(json_encode($data));
+                Log::debug(print_r($data, $return=true));
+                Log::debug("The title is: " . $image->getTitle());
+                Log::debug("Payload: ");
+                Log::debug(print_r($data, $return=true));
+
+                if (preg_match('/Content-Length: (\d+)/', $data, $matches)) {
+                    $contentLength = (int)$matches[1];
+                    Log::debug("File is " . $contentLength . " bytes");
+
+                    if ($contentLength < 500000) {
+                        $this->say("Filesize is printable, let's try");
+
+                        $ch = curl_init($url);
+                        curl_setopt($ch, CURLOPT_HEADER, false);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                        if (!$result = curl_exec($sh)) {
+                            $this->say('Curling went wrong :(');
+                        }
+                        curl_close($ch);
+
+                        CTS2000::printText($result);
+                        $this->say('Printing an image...');
+                    }
+                }
             }
 
             $this->say('Thanks for your offering. It will be used wisely');
