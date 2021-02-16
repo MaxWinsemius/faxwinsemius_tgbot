@@ -47,7 +47,7 @@ class ImagetestConversation extends Conversation
                         curl_setopt($ch, CURLOPT_HEADER, false);
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-                        if (!$result = curl_exec($sh)) {
+                        if (!$result = curl_exec($ch)) {
                             $this->say('Curling went wrong :(');
                         }
                         curl_close($ch);
