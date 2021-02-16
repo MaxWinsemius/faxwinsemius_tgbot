@@ -58,6 +58,8 @@ Welcome to the FaxWinsemius bot! Here you will be able to send your best message
     {
         foreach ($images as $image) {
             $url = $image->getUrl();
+
+            // Get length
             $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_NOBODY, true);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -67,7 +69,25 @@ Welcome to the FaxWinsemius bot! Here you will be able to send your best message
             $data = curl_exec($ch);
             curl_close($ch);
 
-            Log::debug(json_encode($data));
+            if (preg_match('/Content-Length: (\d+)/', $data, $matches)) {
+                $contentLength = (int)$matches[1];
+
+                // Check if length is not too big
+                if ($contentLength < 500000) {
+
+                    $ch = curl_init($url);
+                    curl_setopt($ch, CURLOPT_HEADER, false);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                    if (!$result = curl_exec($ch)) {
+                        $this->say("Officers had a really bad time on working the image. It's unworkable.");
+                    }
+                    curl_close($ch);
+
+                    CTS2000::printText($result);
+                    $this->say('Officers are working on your image');
+                }
+            }
         }
     }
 
@@ -82,7 +102,7 @@ Welcome to the FaxWinsemius bot! Here you will be able to send your best message
 
         $bot->receivesImages(function($bot, $images) {
             if (count($images) > 0) {
-                $bot->reply("YOU HAVE SENT AN IMAGE. THE OFFICERS WILL COME AND BURN YOU. WITH THERMAL PAPER. Unless... it is too much effort");
+                $this->printImages($images);
                 return;
             }
         });

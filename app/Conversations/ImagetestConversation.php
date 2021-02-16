@@ -5,6 +5,8 @@ namespace App\Conversations;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use Illuminate\Support\Facades\Log;
 
+use App\Http\Controllers\CTS2000;
+
 class ImagetestConversation extends Conversation
 {
     /**
