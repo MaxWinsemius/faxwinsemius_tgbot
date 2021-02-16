@@ -20,4 +20,12 @@ class CTS2000 extends Printer
 
         return $process->isSuccessful();
     }
+
+    static public function printText(string $string)
+    {
+        $file = '/messages/' . hash('sha244', $string . now()) . '.data';
+        Storage::disk('local')->put($file, $string);
+
+        return CTS2000::printFile($file);
+    }
 }
