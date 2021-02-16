@@ -48,7 +48,7 @@ class BotManController extends Controller
     public function start(BotMan $bot)
     {
         $str = "
-Welcome to the FaxWinsemius bot! Here you will be able to send your best messages to the CT-S2000 Receipt printer! To start off, first request a printing /license. After that you can print any message that does not start with a '\\'. Send '\help' if you want help. Have fun!
+Welcome to the FaxWinsemius bot! Here you will be able to send your best messages to the CT-S2000 Receipt printer! To start off, first request a printing /license. After that you can print any message that does not start with a '/'. Send '/help' if you want help. Have fun!
 ";
         $bot->reply($str);
     }
