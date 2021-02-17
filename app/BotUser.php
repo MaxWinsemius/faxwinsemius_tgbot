@@ -48,7 +48,7 @@ class BotUser extends Model
         $count = 0;
         $messages;
 
-        if ($type == null) {
+        if ($type === null) {
             $messages = $this->messages;
         } else {
             $messages = $this->messages()->whereType($type)->get();
