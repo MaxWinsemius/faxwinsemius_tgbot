@@ -6,11 +6,10 @@ use BotMan\BotMan\BotMan;
 use BotMan\Drivers\Telegram\TelegramDriver;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
+use App\Message;
 use App\BotUser;
 use App\Conversations\ImagetestConversation;
-use App\Http\Controllers\CTS2000;
 use App\Http\Middleware\ReceivedBotUserAssociator;
 use App\Http\Middleware\SendingMarkdownParser;
 
@@ -57,11 +56,11 @@ Welcome to the FaxWinsemius bot! Here you will be able to send your best message
     public function notifyAdmin(BotMan $bot)
     {
         // Notify administrator
-
         $u = BotUser::findUserById($bot);
 
         $bot->say($u->firstName . " " . $u->lastName . " has sent you a fax",
-            "" . config('printer.telegram_administrator_id'), TelegramDriver::class
+            "" . config('printer.telegram_administrator_id'),
+            TelegramDriver::class
         );
     }
 
@@ -95,7 +94,11 @@ Welcome to the FaxWinsemius bot! Here you will be able to send your best message
                     }
                     curl_close($ch);
 
-                    CTS2000::printText($result);
+                    $m = new Message();
+                    $m->bot_user()->associate(BotUser::findUserById($bot));
+                    $m->setImage($result);
+                    $m->dispatch();
+
                     $bot->reply('Officers are working on your image');
                 }
             }
@@ -146,11 +149,12 @@ Welcome to the FaxWinsemius bot! Here you will be able to send your best message
             $message = $string;
         }
 
-        $file = "messages/" . hash('sha224', $message . now()) . ".data";
-        Storage::disk('local')->put($file, $message);
-        CTS2000::printFile($file);
+        $m = new Message();
+        $m->bot_user()->associate(BotUser::findUserById($bot));
+        $m->setText($message);
+        $m->dispatch();
 
-        $bot->reply("Your message has been sent.");
+        $bot->reply("The officers have received your message.");
 
         $this->notifyAdmin($bot);
     }

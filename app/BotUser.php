@@ -37,4 +37,9 @@ class BotUser extends Model
         $bot->say($string, $this->userid, TelegramDriver::class);
         // TODO: test this in tg, webdriver does not seem to support this feature
     }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
 }
