@@ -11,15 +11,6 @@ use App\BotUser;
 
 class BotUserController extends Controller
 {
-    public function handle()
-    {
-        $botman = app('botman');
-
-        $botman->middleware->received(new ReceivedBotUserAssociator());
-
-        $botman->listen();
-    }
-
     public function status(BotMan $bot)
     {
         $msg = "Some information about you";
