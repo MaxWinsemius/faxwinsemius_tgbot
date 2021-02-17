@@ -42,4 +42,36 @@ class BotUser extends Model
     {
         return $this->hasMany(Message::class);
     }
+
+    public function getStat($type)
+    {
+        $count = 0;
+        $messages;
+
+        if ($type == null) {
+            $messages = $this->messages;
+        } else {
+            $messages = $this->messages()->whereType($type)->get();
+        }
+
+        foreach ( $messages as $message ) {
+            if ($message->stat == 0) {
+                $message->calculateStat();
+            }
+
+            $count += $message->stat;
+        }
+
+        return $count;
+    }
+
+    public function getStatCharacterCount()
+    {
+        return $this->getStat(Message::TYPE_TEXT);
+    }
+
+    public function getStatByteCount()
+    {
+        return $this->getStat(Message::TYPE_IMAGE);
+    }
 }

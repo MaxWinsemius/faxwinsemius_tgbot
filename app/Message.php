@@ -11,6 +11,7 @@ class Message extends Model
 {
     const TYPE_TEXT = 0;
     const TYPE_IMAGE = 1;
+    const TYPES = [self::TYPE_TEXT, self::TYPE_IMAGE];
 
     protected $fillable = ['file', 'type', 'fileAvailable', 'stat'];
 
@@ -124,10 +125,6 @@ class Message extends Model
         }
 
         $this->stat = Storage::size($this->file);
-
-        if ($this->type == self::TYPE_TEXT) {
-            $this->stat--;
-        }
 
         $this->save();
     }

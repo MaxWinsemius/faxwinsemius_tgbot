@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Storage;
 
 use Symfony\Component\Process\Process;
 
-class CTS2000 extends Printer
+class CTS2000 extends Controller
 {
     static protected $lprPrintOptions = "-o cpi=10 -o lpi=8 -o orientation-requested=3";
 
@@ -20,16 +20,6 @@ class CTS2000 extends Printer
         $process = new Process("/usr/bin/lpr " . $opts . " " . $path);
         $process->run();
 
-        Storage::disk('local')->delete($file);
-
         return $process->isSuccessful();
-    }
-
-    static public function printText(string $string)
-    {
-        $file = '/messages/' . hash('sha224', $string . now()) . '.data';
-        Storage::disk('local')->put($file, $string);
-
-        return CTS2000::printFile($file);
     }
 }

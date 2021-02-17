@@ -15,11 +15,14 @@ class BotUserController extends Controller
     {
         $msg = "Some information about you";
         $u = BotUser::findUserById($bot);
+        $txtdat = $u->getStatCharacterCount();
+        $imgdat = $u->getStatByteCount();
 
-        $msg = $msg . "\nYou are " . ($u->printAccess ? "" : "not ") . 'allowed to print.';
+        $msg .= "\nYou are " . ($u->printAccess ? "" : "not ") . 'allowed to print.';
+        $msg .= "\nYou have printed " . $txtdat . " characters, and " 
+            . $imgdat . " bytes of image data, which comes down to a total of " . ($txtdat + $imgdat) . " bytes.";
 
-
-        $msg = $msg . "\nUserID: " . $bot->getUser()->getId();
+        //$msg = $msg . "\nUserID: " . $bot->getUser()->getId();
 
         $bot->reply($msg);
     }
