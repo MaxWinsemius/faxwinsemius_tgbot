@@ -90,12 +90,20 @@ class Message extends Model
      */
     public function deleteFile()
     {
+        // First off, check if the file actually exists
+        if (!$this->fileAvailable) {
+            // File is already deleted
+            return;
+        }
+
         // Before removing file make sure the stats are saved
         if (!$this->stat) {
             $this->calculateStat;
         }
 
         Storage::delete($this->file);
+        $this->fileAvailable = false;
+        $this->save();
     }
 
     /**
