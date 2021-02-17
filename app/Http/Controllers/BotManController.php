@@ -54,7 +54,18 @@ Welcome to the FaxWinsemius bot! Here you will be able to send your best message
         $bot->reply($str);
     }
 
-    protected function printImages($images)
+    public function notifyAdmin(BotMan $bot)
+    {
+        // Notify administrator
+
+        $u = BotUser::findUserById($bot);
+
+        $bot->say($u->firstName . " " . $u->lastName . " has sent you a fax",
+            "" . config('printer.telegram_administrator_id'), TelegramDriver::class
+        );
+    }
+
+    protected function printImages($bot, $images)
     {
         foreach ($images as $image) {
             $url = $image->getUrl();
@@ -80,15 +91,17 @@ Welcome to the FaxWinsemius bot! Here you will be able to send your best message
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
                     if (!$result = curl_exec($ch)) {
-                        $this->say("Officers had a really bad time on working the image. It's unworkable.");
+                        $bot->reply("Officers had a really bad time on working the image. It's unworkable.");
                     }
                     curl_close($ch);
 
                     CTS2000::printText($result);
-                    $this->say('Officers are working on your image');
+                    $bot->reply('Officers are working on your image');
                 }
             }
         }
+
+        $this->notifyAdmin($bot);
     }
 
     public function doAdmin(BotMan $bot)
@@ -102,13 +115,18 @@ Welcome to the FaxWinsemius bot! Here you will be able to send your best message
 
         $bot->receivesImages(function($bot, $images) {
             if (count($images) > 0) {
-                $this->printImages($images);
+                $this->printImages($bot, $images);
                 return;
             }
         });
 
         if ($bot->getName() == 'TelegramPhoto') {
-            $bot->reply("YOU HAVE SENT AN IMAGE. THE OFFICERS WILL COME AND BURN YOU. WITH THERMAL PAPER. Unless... it is too much effort");
+            foreach ($bot->getMessages() as $message) {
+                $images = $message->getImages();
+                if (count($images) > 0) {
+                    $this->printImages($bot, $images);
+                }
+            }
             return;
         }
 
@@ -134,13 +152,7 @@ Welcome to the FaxWinsemius bot! Here you will be able to send your best message
 
         $bot->reply("Your message has been sent.");
 
-        // Notify administrator
-
-        $u = BotUser::findUserById($bot);
-
-        $bot->say($u->firstName . " " . $u->lastName . " has sent you a fax", 
-            "" . config('printer.telegram_administrator_id'), TelegramDriver::class    
-        );
+        $this->notifyAdmin($bot);
     }
 
     public function help(BotMan $bot)
@@ -152,9 +164,9 @@ https://www.youtube.com/watch?v=FP9y7F_rzzo
 /status Show some status information about yourself.
 /license Request a license from the officials.
 
-Once you get a printing license, you can print any message that does not start with a '/'
+Once you get a printing license, you can print any message that does not start with a '/'.
 
-The officials do not like pictures. Do not try to send pictures. Pictures are forbidden.
+Officials even accept pictures these days!
             ";
 
         $bot->reply($str);
