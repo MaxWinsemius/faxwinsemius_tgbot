@@ -9,7 +9,7 @@ use Symfony\Component\Process\Process;
 
 class CTS2000 extends Printer
 {
-    static protected $printoptions = "-o cpi=10 -o lpi=8";
+    static protected $printoptions = "-o cpi=10 -o lpi=8 -o orientation-requested=3";
 
     static public function printFile($file, $usePrinterOptions=true)
     {
