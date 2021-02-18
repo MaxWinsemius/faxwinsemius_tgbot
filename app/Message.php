@@ -77,7 +77,15 @@ class Message extends Model
      */
     public function print()
     {
-        CTS2000::printFile($this->file);
+        switch ($this->type) {
+        case self::TYPE_TEXT:
+            CTS2000::printText(Storage::get($this->file));
+            //CTS2000::printFile($this->file);
+            break;
+        case self::TYPE_IMAGE:
+            CTS2000::printFile($this->file);
+            break;
+        }
 
         // TODO: base this value off if cups has printed the file
         $this->printed = true;
