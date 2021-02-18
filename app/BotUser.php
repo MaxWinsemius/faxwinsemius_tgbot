@@ -18,11 +18,11 @@ class BotUser extends Model
     {
         parent::boot();
 
-        if (app()->environment() != 'local') {
-            static::addGlobalScope('validUser', function(Builder $builder) {
-                $builder->whereNotNull('firstName')->orWhereNotNull('lastName');
-            });
-        }
+        //if (app()->environment() != 'local') {
+        //    static::addGlobalScope('validUser', function(Builder $builder) {
+        //        $builder->whereNotNull('firstName')->orWhereNotNull('lastName');
+        //    });
+        //}
     }
 
     static public function findUserById(BotMan $bot)
