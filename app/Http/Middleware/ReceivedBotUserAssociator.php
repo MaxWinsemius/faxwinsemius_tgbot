@@ -25,7 +25,7 @@ class ReceivedBotUserAssociator implements Received
      */
     public function received(IncomingMessage $message, $next, BotMan $bot)
     {
-        $u = BotUser::where('userid', '=', $message->getSender())->first();
+        $u = BotUser::withoutGlobalScope('validUser')->where('userid', '=', $message->getSender())->first();
 
         if ($u == null) {
             $u = new BotUser();
