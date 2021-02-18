@@ -30,6 +30,11 @@ class BotUser extends Model
         return static::whereUserid($bot->getUser()->getId())->first();
     }
 
+    public function scopeOfBotManCall($query, BotMan $bot)
+    {
+        return $query->whereUserid($bot->getUser()->getId());
+    }
+
     public function sendMessage($string)
     {
         $bot = app('botman');

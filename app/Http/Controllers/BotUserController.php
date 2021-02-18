@@ -11,6 +11,16 @@ use App\BotUser;
 
 class BotUserController extends Controller
 {
+    public function handle()
+    {
+        $botman = app('botman');
+
+        $botman->middleware->received(new ReceivedBotUserAssociator());
+        $botman->middleware->sending(new SendingMarkdownParser());
+
+        $botman->listen();
+    }
+
     public function status(BotMan $bot)
     {
         $msg = "Some information about you";
@@ -29,7 +39,7 @@ class BotUserController extends Controller
 
     public function register(BotMan $bot)
     {
-        $u = BotUser::withoutGlobalScope('validUser')->findUserById($bot);
+        $u = BotUser::withoutGlobalScope('validUser')->ofBotManCall($bot);
 
         if ( $u->printAccess ) {
             $bot->reply("You're already received a license! Don't waste your time on official matters!");
