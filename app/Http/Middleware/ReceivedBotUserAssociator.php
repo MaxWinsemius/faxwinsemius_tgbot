@@ -30,8 +30,8 @@ class ReceivedBotUserAssociator implements Received
         if ($u == null) {
             $u = new BotUser();
             $u->userid = $message->getSender();
-            $bu = $bot->getUser();
             // Botman has not initialized the incoming message yet and thus is unable to get data from the api
+            //$bu = $bot->getUser();
             //$u->firstName = $bu->getFirstName();
             //$u->lastName = $bu->getLastName();
             $u->save();
