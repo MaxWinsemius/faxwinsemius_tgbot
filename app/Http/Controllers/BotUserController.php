@@ -39,7 +39,7 @@ class BotUserController extends Controller
 
     public function register(BotMan $bot)
     {
-        $u = BotUser::withoutGlobalScope('validUser')->ofBotManCall($bot);
+        $u = BotUser::withoutGlobalScope('validUser')->ofBotManCall($bot)->first();
 
         if ( $u->printAccess ) {
             $bot->reply("You're already received a license! Don't waste your time on official matters!");
