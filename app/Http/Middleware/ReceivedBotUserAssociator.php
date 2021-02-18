@@ -30,6 +30,8 @@ class ReceivedBotUserAssociator implements Received
         if ($u == null) {
             $u = new BotUser();
             $u->userid = $message->getSender();
+            $u->firstName = $bot->getUser()->getFirstName();
+            $u->lastName = $bot->getUser()->getLastName();
             $u->save();
         }
 
