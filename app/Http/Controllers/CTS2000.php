@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Process\Process;
 
@@ -30,7 +29,7 @@ class CTS2000 extends Controller
         return self::$printer;
     }
 
-    static public function printFile($file, $usePrinterOptions=true)
+    static public function printFile($file, $cut = true, $usePrinterOptions=true)
     {
         $path = Storage::disk('local')->path($file);
 
@@ -43,12 +42,37 @@ class CTS2000 extends Controller
         return $process->isSuccessful();
     }
 
+    static public function printBarcode($content, $cut = true, $type = Printer::BARCODE_CODE39)
+    {
+        $printer = self::getPrinter();
+
+        $printer->barcode($content, $type);
+        self::$cut = false;
+
+        if ($cut) {
+            self::printerCut();
+        }
+    }
+
+    static public function printQrCode($content, $cut = true, $ecc = Printer::QR_ECLEVEL_L, $size = 3, 
+        $model = Printer::QR_MODEL_2)
+    {
+        $printer = self::getPrinter();
+
+        $printer->qrCode($content, $ecc, $size, $model);
+        self::$cut = false;
+
+        if ($cut) {
+            self::printerCut();
+        }
+    }
+
     static public function printText($string, $cut = true)
     {
         $printer = self::getPrinter();
 
         $printer->text($string);
-        $printer->text("\n");
+        $printer->feed();
         self::$cut = false;
 
         if ($cut) {

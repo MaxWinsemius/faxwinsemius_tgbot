@@ -71,19 +71,73 @@ class Message extends Model
     }
 
     /**
+     * Parses the text and prints extra qr code if link is available
+     *
+     * @return false if printing fails (printer is unavailable) and true on success.
+     */
+    public function parsePrintText($str, $cut = true)
+    {
+        // First just do the printing of the text
+        CTS2000::printText($str, false);
+
+        // Then find any links that should be converted to qr codes
+        $link_tags = ["http://", "https://"];
+        $link_term_tags = ["\n", " ", ". "];
+
+        foreach ($link_tags as $tag) {
+            $start_index = strpos($str, $tag);
+            $end_index = 0;
+
+            // A start index is available
+            while ($start_index !== false) {
+                $new_str = substr($str, $start_index + strlen($tag) - 1);
+                $min = PHP_INT_MAX;
+
+                foreach ($link_term_tags as $next_tag) {
+                    $new_start = strpos($new_str, $next_tag);
+                    if ( $new_start !== false ) {
+                        $min = min($new_start, $min);
+                    }
+                }
+
+                foreach ($link_tags as $next_tag) {
+                    $new_start = strpos($new_str, $next_tag);
+                    if ( $new_start !== false ) {
+                        $min = min($new_start, $min);
+                    }
+                }
+
+                $min = min(strlen($str), $min);
+
+                $length = $min - $start_index;
+
+                $link = substr($str, $start_index, $length);
+
+                CTS2000::printText("URL: " . $link, false);
+                CTS2000::printQrCode($link, false);
+
+                $start_index = strpos($new_str, $tag);
+            }
+        }
+
+        if ($cut) {
+            CTS2000::printerCut();
+        }
+    }
+
+    /**
      * Tries to print the file
      *
      * @return false if printing fails (printer is unavailable) and true on success.
      */
-    public function print()
+    public function print($cut = true)
     {
         switch ($this->type) {
         case self::TYPE_TEXT:
-            CTS2000::printText(Storage::get($this->file));
-            //CTS2000::printFile($this->file);
+            $this->parsePrintText(Storage::get($this->file), $cut);
             break;
         case self::TYPE_IMAGE:
-            CTS2000::printFile($this->file);
+            CTS2000::printFile($this->file, $cut);
             break;
         }
 
