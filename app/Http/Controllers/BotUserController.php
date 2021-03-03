@@ -23,15 +23,19 @@ class BotUserController extends Controller
 
     public function status(BotMan $bot)
     {
-        $msg = "Some information about you";
+        $msg = "Some information about you:";
         $u = BotUser::findUserById($bot);
         $txtdat = $u->getStatCharacterCount();
         $imgdat = $u->getStatByteCount();
 
-        $msg .= "\nYou are " . ($u->printAccess ? "" : "not ") . 'allowed to print.';
-        $msg .= "\nYou have printed " . $txtdat . " characters, and " 
-            . $imgdat . " bytes of image data, which comes down to a total of " . ($txtdat + $imgdat) . " bytes.";
+        $msg .= "\nYou are " . ($u->printAccess ? "" : "not ") . "allowed to print.";
 
+        if ($u->printAccess) {
+            $msg .= "\n\nYou have printed " . $txtdat . " characters, and " 
+                . $imgdat . " bytes of image data, which comes down to a total of " . ($txtdat + $imgdat) . " bytes.";
+            $msg .= "\nIn total you have sent " . $u->messages->count() . " different messages.";
+
+        }
         //$msg = $msg . "\nUserID: " . $bot->getUser()->getId();
 
         $bot->reply($msg);
