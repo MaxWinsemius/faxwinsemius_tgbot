@@ -19,4 +19,6 @@ $botman->group(['middleware' => new MatchPrintingAllowed()], function ($botman) 
 $botman->group(['recipient' => config('printer.telegram_administrator_id')], function ($botman) {
     $botman->hears('/verifyLicense {botuser}', BotUserController::class.'@verifyLicense');
     $botman->hears('/startTest', BotManController::class.'@doAdmin');
+    $botman->hears('/allstats', BotManController::class.'@allStats');
+    $botman->hears('/pleh', BotManController::class.'@pleh');
 });
