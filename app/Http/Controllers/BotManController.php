@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 use App\Message;
 use App\BotUser;
-use App\Conversations\ImagetestConversation;
+use App\Conversations\AllstatsConversation;
 use App\Http\Middleware\ReceivedBotUserAssociator;
 use App\Http\Middleware\SendingMarkdownParser;
 
@@ -165,7 +165,7 @@ Welcome to the FaxWinsemius bot! Here you will be able to send your best message
 https://www.youtube.com/watch?v=FP9y7F_rzzo
 
 /help Show this help message.
-/status Show some status information about yourself.
+/stats or /status Show some status information about yourself.
 /license Request a license from the officials.
 
 Once you get a printing license, you can print any message that does not start with a '/'.
@@ -174,5 +174,27 @@ Officials even accept pictures these days!
             ";
 
         $bot->reply($str);
+    }
+
+    public function pleh(BotMan $bot)
+    {
+        $str = "
+/start
+/help
+/stats /status
+/license
+
+/verifyLicense {botuser}
+/allstats
+/pleh (this menu)
+            ";
+
+        $bot->reply($str);
+    }
+
+    public function allStats(BotMan $bot)
+    {
+        $bot->reply("starting allstats conversation");
+        $bot->startConversation(new AllstatsConversation());
     }
 }
