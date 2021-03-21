@@ -210,7 +210,7 @@ class Message extends Model
         $amt_lines = sizeof($paragraphs);
 
         foreach ($paragraphs as $paragraph) {
-            $amt_lines += strlen($paragraph) % $line_length;
+            $amt_lines += floor(strlen($paragraph) / $line_length);
         }
 
         return $amt_lines;
