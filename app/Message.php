@@ -80,6 +80,10 @@ class Message extends Model
         // First just do the printing of the text
         CTS2000::printText($str, false);
 
+        for ($i = self::amt_lines($str); $i < 3; $i++) {
+            CTS2000::printText("\n", false);
+        }
+
         // Then find any links that should be converted to qr codes
         $link_tags = ["http://", "https://"];
         $link_term_tags = ["\n", " ", ". "];
@@ -194,5 +198,17 @@ class Message extends Model
     public static function generateFileName($data, $hash='sha224')
     {
         return '/messages/' . hash($hash, $data . now()) . '.data';
+    }
+
+    protected static function amt_lines( $str, $line_length = 48)
+    {
+        $paragraphs = explode("\n", $str);
+        $amt_lines = sizeof($paragraphs);
+
+        foreach ($paragraphs as $paragraph) {
+            $amt_lines += strlen($paragraph) % $line_length;
+        }
+
+        return $amt_lines;
     }
 }
