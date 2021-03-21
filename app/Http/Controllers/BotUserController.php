@@ -31,9 +31,9 @@ class BotUserController extends Controller
         $msg .= "\nYou are " . ($u->printAccess ? "" : "not ") . "allowed to print.";
 
         if ($u->printAccess) {
-            $msg .= "\n\nYou have printed " . $txtdat . " characters, and " 
-                . $imgdat . " bytes of image data, which comes down to a total of " . ($txtdat + $imgdat) . " bytes.";
-            $msg .= "\nIn total you have sent " . $u->messages->count() . " different messages.";
+            $msg .= "\n\nYou have printed " . $txtdat . " characters, and \n" 
+                . $imgdat . " bytes of image data, which comes down to a total of \n" . ($txtdat + $imgdat) . " bytes.";
+            $msg .= "\nIn total you have sent \n" . $u->messages->count() . " different messages.";
 
         }
         //$msg = $msg . "\nUserID: " . $bot->getUser()->getId();
