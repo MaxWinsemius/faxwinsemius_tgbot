@@ -80,11 +80,8 @@ class Message extends Model
         // First just do the printing of the text
         CTS2000::printText($str, false);
 
-        for ($i = self::amt_lines($str); $i < 3; $i++) {
-            CTS2000::printText("\n", false);
-        }
-
         // Then find any links that should be converted to qr codes
+        $no_urls = true;
         $link_tags = ["http://", "https://"];
         $link_term_tags = ["\n", " ", ". "];
 
@@ -94,6 +91,7 @@ class Message extends Model
 
             // A start index is available
             while ($start_index !== false) {
+                $no_urls = false;
                 $new_str = substr($str, $start_index + strlen($tag) - 1);
                 $min = PHP_INT_MAX;
 
@@ -121,6 +119,12 @@ class Message extends Model
                 CTS2000::printQrCode($link, false);
 
                 $start_index = strpos($new_str, $tag);
+            }
+        }
+
+        if ($no_urls) {
+            for ($i = self::amt_lines($str); $i < 3; $i++) {
+                CTS2000::printText("\n", false);
             }
         }
 
