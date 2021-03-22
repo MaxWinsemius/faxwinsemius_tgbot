@@ -87,12 +87,11 @@ class Message extends Model
 
         foreach ($link_tags as $tag) {
             $start_index = strpos($str, $tag);
-            $end_index = 0;
 
             // A start index is available
             while ($start_index !== false) {
                 $no_urls = false;
-                $new_str = substr($str, $start_index + strlen($tag) - 1);
+                $new_str = substr($str, $start_index + strlen($tag));
                 $min = PHP_INT_MAX;
 
                 foreach ($link_term_tags as $next_tag) {
@@ -109,7 +108,7 @@ class Message extends Model
                     }
                 }
 
-                $min = min(strlen($str), $min);
+                $min = min(strlen($str), $min + strlen($tag));
 
                 $length = $min - $start_index;
 
@@ -118,7 +117,11 @@ class Message extends Model
                 CTS2000::printText("URL: " . $link, false);
                 CTS2000::printQrCode($link, false);
 
+                $old_start_index = $start_index;
                 $start_index = strpos($new_str, $tag);
+                if ($start_index !== false) {
+                    $start_index += $old_start_index + strlen($tag);
+                }
             }
         }
 
