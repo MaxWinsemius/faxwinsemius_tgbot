@@ -79,7 +79,7 @@ Welcome to the FaxWinsemius bot! Here you will be able to send your best message
             $data = curl_exec($ch);
             curl_close($ch);
 
-            if (preg_match('/Content-Length: (\d+)/', $data, $matches)) {
+            if (preg_match('/content-length: (\d+)/', $data, $matches)) {
                 $contentLength = (int)$matches[1];
 
                 // Check if length is not too big
@@ -137,6 +137,12 @@ Welcome to the FaxWinsemius bot! Here you will be able to send your best message
             if (count($videos) > 0) {
                 $bot->reply("You fool! What do you even imagine what would happen?");
                 return;
+            }
+        });
+
+        $bot->receivesFiles(function($bot, $files){
+            foreach ($files as $file) {
+                Log::debug($file);
             }
         });
 
